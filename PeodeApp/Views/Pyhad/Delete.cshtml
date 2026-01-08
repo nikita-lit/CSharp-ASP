@@ -1,0 +1,33 @@
+﻿@model PeodeApp.Models.Pyha
+
+@{
+    ViewData["Title"] = "Kustuta";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Kas oled kindel, et soovid selle kustutada?</h3>
+<div>
+    <h4>Pyha</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nimi)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nimi)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Kuupaev)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Kuupaev)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete" style="flex-direction: row">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Kustuta" class="btn btn-danger" /> |
+        <a asp-action="Index">Tagasi nimekirja</a>
+    </form>
+</div>
