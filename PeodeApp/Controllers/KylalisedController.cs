@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PeodeApp.Data;
 using PeodeApp.Models;
 
 namespace PeodeApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class KylalisedController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,9 +17,12 @@ namespace PeodeApp.Controllers
         }
 
         // GET: Kylalised
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(List<Kylaline>? kylalised = null)
         {
-            return View(await _context.Kylalined.ToListAsync());
+            if (kylalised == null)
+                return View(await _context.Kylalined.ToListAsync());
+            else
+                return View(kylalised);
         }
 
         // GET: Kylalised/Details/5
@@ -152,6 +152,20 @@ namespace PeodeApp.Controllers
         private bool KylalineExists(int id)
         {
             return _context.Kylalined.Any(e => e.ID == id);
+        }
+
+        public async Task<IActionResult> Tulevad()
+        {
+            var tulevad = _context.Kylalined.Where(x => x.OnKutse == true).ToList();
+            ViewBag.Filter = "Tulevad külalised";
+            return View("Index", tulevad);
+        }
+
+        public async Task<IActionResult> MitteTulevad()
+        {
+            var tulevad = _context.Kylalined.Where(x => x.OnKutse == false).ToList();
+            ViewBag.Filter = "Mitte tulevad külalised";
+            return View("Index", tulevad);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PeodeApp.Data;
 
@@ -6,7 +7,7 @@ namespace PeodeApp
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +18,18 @@ namespace PeodeApp
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await CreateRoles(services); // Run the seeder
+                await AssignRoleToUserByEmail(services, "nikitalitvinenko28@gmail.com");
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -45,9 +54,38 @@ namespace PeodeApp
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
             app.MapRazorPages()
-               .WithStaticAssets();
+               .WithStaticAssets(); 
 
             app.Run();
+        }
+
+        private static async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            string[] roleNames = { "Admin" };
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                    await roleManager.CreateAsync(new IdentityRole { Name = roleName });
+            }
+        }
+
+        private static async Task AssignRoleToUserByEmail(
+            IServiceProvider serviceProvider,
+            string email)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return;
+
+            if (!await userManager.IsInRoleAsync(user, "Admin"))
+                await userManager.AddToRoleAsync(user, "Admin");
         }
     }
 }

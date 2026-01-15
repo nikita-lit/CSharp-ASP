@@ -7,5 +7,6 @@
         public string Email { get; set; }
         public bool OnKutse { get; set; }
         public int PyhaID { get; set; }
+        public Pyha? Pyha { get; set; }
     }
 }

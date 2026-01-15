@@ -11,7 +11,7 @@ using PeodeApp.Models;
 
 namespace PeodeApp.Controllers
 {
-    [Authorize] // Ainult sisse logitud kasutajale
+    [Authorize(Roles = "Admin")] // Ainult sisse logitud kasutajale
     public class PyhadController : Controller
     {
         private readonly ApplicationDbContext _context;

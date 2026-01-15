@@ -28,6 +28,16 @@ namespace PeodeApp.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -62,17 +72,18 @@ namespace PeodeApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Ankeet(Kylaline kylaline)
         {
-            if(ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Kylalined.Add(kylaline);
-                _context.SaveChanges();
-
-                return RedirectToAction("Tanan", kylaline);
+                ViewBag.Pyhad = new SelectList(_context.Pyhad, "ID", "Nimi");
+                return View(kylaline);
             }
 
-            return View(kylaline);
+            _context.Kylalined.Add(kylaline);
+            _context.SaveChanges();
+
+            return RedirectToAction("Tanan", kylaline);
         }
-        
+
         private void SaadaEmail(Kylaline kylaline, string pilt, string pyha)
         {
             string failiTee = Path.Combine(
