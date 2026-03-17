@@ -49,7 +49,6 @@ namespace School.Controllers
         {
             var model = new NotifyViewModel();
 
-            // Populate students dropdown with users in role 'Student' (value = email)
             var students = await _userManager.GetUsersInRoleAsync("Student");
             model.Students = students
                 .OrderBy(u => u.UserName)
@@ -82,7 +81,6 @@ namespace School.Controllers
             var recipients = new List<(string name, string email)>();
             recipients.Add((user.UserName ?? user.Email ?? user.Id, user.Email ?? string.Empty));
 
-            // Try sending via SMTP if configured
             if (!string.IsNullOrEmpty(recipients[0].email))
             {
                 try
