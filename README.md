@@ -1,3 +1,5 @@
 # Language School System
 
-<img width="1792" height="1147" alt="image" src="https://github.com/user-attachments/assets/3be5c8f7-c78e-44f0-a3b6-d49df763ba11" />
+A web application for managing a language school, developed using ASP.NET and Entity Framework Core.
+
+![Overview](docs/images/overview.png)
